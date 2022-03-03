@@ -17,7 +17,6 @@
 /* Logging */
 #include <argos3/core/utility/logging/argos_log.h>
 
-
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -140,11 +139,30 @@ void CKheperaIVRos::publishLIDAR(){
 
 void CKheperaIVRos::publishLineOfSight(){
   // broadcast current robot to all LOS
-  char const *c = parse_id_number(GetId());
-  for(int i=0;i<10;i++){
-    int offset = -1*i+(10);
-    m_pcRABA->SetData(i, c[GetId().length()-offset]);
-  }
+  int msgCap = 10;
+  // char payload[msgCap];
+  // for (int i = 0; i < msgCap; i++) {
+  //   payload[i] = '\0';
+  // }
+  // Get local id
+
+  char nulls[2] = {'0', '0'};
+  uint8_t* empty = reinterpret_cast<uint8_t*>(&nulls);
+
+
+
+  const char* id = GetId().c_str();
+  // Copy id to payload
+  // strcpy(&payload, id);
+  // memcpy(&payload,strlen(id))
+  // Convert c_string to bytes
+  uint8_t* data = reinterpret_cast<uint8_t*>(const_cast<char*>(id));
+
+  // argos::CByteArray buff = argos::CByteArray((size_t) msgCap - , (UInt8) '\0');
+  CByteArray buff = CByteArray(data, 8);
+
+  buff.AddBuffer(empty, 2);
+  m_pcRABA->SetData(buff);
 
   // write all robot names within los to rosmsg
   const CCI_RangeAndBearingSensor::TReadings& packets = m_pcRABS->GetReadings();
@@ -162,7 +180,7 @@ void CKheperaIVRos::publishLineOfSight(){
 
     const unsigned char* data = packets[i].Data.ToCArray();
     std::string s(reinterpret_cast<const char*>(data), packets[i].Data.Size());
-    losmsg.robotName.data = s;
+    losmsg.robotName = s;
     loslist.robots.push_back(losmsg);
   }
   losPub.publish(loslist);
