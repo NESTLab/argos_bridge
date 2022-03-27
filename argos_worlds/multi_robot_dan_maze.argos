@@ -23,7 +23,7 @@
         <range_and_bearing implementation="medium"
                                      medium="rab" />
         <kheperaiv_lidar implementation="default"
-               show_rays="true"
+               show_rays="false"
                noise_level="0.1"/>
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" ticks_per_second="10"/>
@@ -124,7 +124,6 @@
     <distribute>
       <position method="uniform" min="-0.25,-1,0" max="0.25,1,0"/>
       <orientation method="constant" values="0,0,0"/>
-
       <entity quantity="1" max_trials="100">
 
         <kheperaiv id="robot_">
@@ -157,7 +156,7 @@
     <qt-opengl lua_editor="false">
       <camera>
         <placements>
-          <placement index="0" position="5,-5, 70.34" look_at="5,-5,0" up="1,0,0" lens_focal_length="100" />
+          <placement index="0" position="2,-2, 70.34" look_at="2,0,0" up="1,0,0" lens_focal_length="300" />
         </placements>
       </camera>
     </qt-opengl>
