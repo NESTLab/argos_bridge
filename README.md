@@ -15,57 +15,53 @@ which connects to ROS.
 
 Setup
 -----
+Argos bridge is provided with a docker environment which includes all components needed for a simple demo.  
+Start the container using:  
 
-It is assumed that argos has been installed.  
+    docker-compose up --build  
 
-The contents of this directory should be placed within your ROS catkin workspace src directory (e.g. ~/catkin_ws/src).
+Open a bash shell using:  
 
-The directory 'ros_lib_links' has a symbolic link to libroscpp.so.  This may
-need to be updated for your system (most likely).
-
-The following environment variables should be set, replacing 'catkin_ws' with a
-suitable value if necessary:
-
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/argos3
-    export ARGOS_PLUGIN_PATH=$HOME/catkin_ws/src/argos_bridge/ros_lib_links
-    export ARGOS_PLUGIN_PATH=$ARGOS_PLUGIN_PATH:$HOME/catkin_ws/devel/lib
-
-Of course, you had better check that all of these paths make sense.
+    docker exec -it $(docker ps --format "{{.ID}}") /bin/bash
 
 Use
 ---
-Once the package has been built (with catkin_make --- see "Issues" below) do
-the following, or some variation:
+Find the launch script at argos_brige/launch to start a simulation.  
+Example usage:  
 
-    cd ~/catkin_ws/src/argos_bridge
-    ./launch/launch_demo.sh
+    ./launch.sh [name of argos world] [name of ros launch file]
 
-This executes a script which generates a launch file which is passed to
-roslaunch for execution.  Each robot will be running a different instance of
-'demo_controller.py' from the 'scripts' directory.
-    
-    argos3 -c argos_worlds/construct.argos
-    
-Hit the play button on the simulator.  
+Store argos worlds and ros launch files in the launch directory according to the file structure:
+
+    /launch
+      |-> /argos_worlds {store argos files here}
+      |-> /roslaunch_files {store ros launch files here}
+      |-> launch.sh {launch script for simulations}
+      |-> killall.sh {kills all ros and argos processes to end a simulation}
+
+File Structure
+------
+    /argos_brige
+      |-> CMakeLists.txt    
+      |-> package.xml       
+      |-> /launch           
+            |-> /argos_worlds
+            |-> /roslaunch_files
+      |-> /msg              
+      |-> /plugin            
+            |-> CmakeLists.txt
+            |-> /loop_functions
+                  |-> /clock_loop_functions
+            |-> /controllers
+                  |-> /khepraiv_ros  
+                  |-> /abstract_ros_controller
+      |-> ros_lib_links
+      |-> scripts
 
 Issues
 ------
-- There is some issue in the order of building the messages in 'msg' and the
-  argos plugin in 'plugin'.  To resolve, comment out the following line in
-  CMakeLists.txt:
-
-    add_subdirectory(plugin)
-
-  Go ahead and do 'catkin_make' then uncomment the line and do another
-  'catkin_make'.  This should only occur once.
-
-- If there are issues related to ros::console::initialized, check your ROS version
-and if the ROS_DISTRO env is set.   
 
 Author
 ------
-Andrew Vardy (av@mun.ca)
-Department of Computer Science
-Department of Electrical and Computer Engineering
-Memorial University
-St. John's, Canada
+Peter Nikopoulos (peter@nikopoulos.net)  
+(originally forked from BOTSlab/argos_bridge)
