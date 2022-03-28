@@ -47,6 +47,5 @@ link_directories(${ARGOS_LIBRARY_DIRS})
 
 include_directories(${CMAKE_SOURCE_DIR}/controllers)
 
-add_subdirectory(argos_ros_bot)
 add_subdirectory(kheperaiv_ros)
 add_subdirectory(clock_loop_functions)
