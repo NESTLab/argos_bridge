@@ -80,9 +80,31 @@ RUN rosdep init; \
   mkdir -p /root/catkin_ws/src; \
   echo "cd /root/catkin_ws;" >> ~/.bashrc; \
   echo "source /root/catkin_ws/devel/setup.bash;" >> ~/.bashrc; \
+  echo "export TURTLEBOT3_MODEL=burger"; \
   echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/argos3:/opt/ros/noetic/lib" >> ~/.bashrc; \
   echo "export ARGOS_PLUGIN_PATH=$HOME/catkin_ws/src/argos_bridge/ros_lib_links" >> ~/.bashrc; \
   echo "export ARGOS_PLUGIN_PATH=$ARGOS_PLUGIN_PATH:$HOME/catkin_ws/devel/lib" >> ~/.bashrc; 
+
+# add ros packages 
+RUN git clone -b noetic-devel https://github.com/hrnr/m-explore.git; \
+  git clone -b noetic-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git; \
+  cd /root/catkin_ws/src; \
+  ln -s /m-explore .; \
+  cd /root/catkin_ws/src; \
+  ln -s /turtlebot3_simulations/ .; \ 
+  sudo apt-get install ros-noetic-joy ros-noetic-teleop-twist-joy \
+  ros-noetic-teleop-twist-keyboard ros-noetic-laser-proc \
+  ros-noetic-rgbd-launch ros-noetic-depthimage-to-laserscan \
+  ros-noetic-rosserial-arduino ros-noetic-rosserial-python \
+  ros-noetic-rosserial-server ros-noetic-rosserial-client \
+  ros-noetic-rosserial-msgs ros-noetic-amcl ros-noetic-map-server \
+  ros-noetic-move-base ros-noetic-urdf ros-noetic-xacro \
+  ros-noetic-compressed-image-transport ros-noetic-rqt* \
+  ros-noetic-frontier-exploration ros-noetic-navigation-stage \
+  ros-noetic-gmapping ros-noetic-navigation ros-noetic-interactive-markers; \
+  sudo apt-get install ros-noetic-dynamixel-sdk; \
+  sudo apt-get install ros-noetic-turtlebot3-msgs; \
+  sudo apt-get install ros-noetic-turtlebot3;
 EXPOSE 8080
 
 CMD ["/root/catkin_ws/src/entrypoint.sh"]
