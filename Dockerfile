@@ -58,7 +58,7 @@ RUN apt-get install -y libgsl-dev cmake libfreeimage-dev libfreeimageplus-dev \
 # Install kheperaiv robot to ARGos3
 RUN git clone https://github.com/ilpincy/argos3-kheperaiv.git; \
   cd argos3-kheperaiv && mkdir build_sim && cd build_sim; \
-  cmake -DCMAKE_BUILD_TYPE=Release ../src; \
+  cmake -DCMAKE_BUILD_TYPE=debug ../src; \
   make; \
   sudo make install
 
