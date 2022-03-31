@@ -1,4 +1,7 @@
-**__pycache/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 **build/
 .vscode/
 /m-explore
