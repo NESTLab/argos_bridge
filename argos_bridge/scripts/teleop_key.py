@@ -102,13 +102,14 @@ def constrain(input, low, high):
 
     return input
 
-def checkLinearLimitVelocity(vel, robot_config):
-    c = robot_config.capitalize()
+def checkLinearLimitVelocity(vel):
+    c = robot_config.upper()
+    print(c)
     vel = constrain(vel, -configs[f'{c}_MAX_LIN_VEL'], configs[f'{c}_MAX_LIN_VEL'])
     return vel
 
 def checkAngularLimitVelocity(vel):
-    c = robot_config.capitalize()
+    c = robot_config.upper()
     vel = constrain(vel, -configs[f'{c}_MAX_ANG_VEL'], configs[f'{c}_MAX_ANG_VEL'])
     return vel
 
@@ -139,7 +140,7 @@ if __name__=="__main__":
 
 
     rospy.init_node('argos_teleop', anonymous=True)
-    pub = rospy.Publisher(f'{robot_name}/cmd_vel', Twist, queue_size=10)
+    pub = rospy.Publisher(f'/cmd_vel', Twist, queue_size=10)
 
     turtlebot3_model = robot_config
 
@@ -193,7 +194,7 @@ if __name__=="__main__":
 
             pub.publish(twist)
 
-    except:
+    except Exception as e:
         print(e)
 
     finally:
