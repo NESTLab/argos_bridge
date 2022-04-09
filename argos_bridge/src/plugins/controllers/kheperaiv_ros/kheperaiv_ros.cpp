@@ -46,8 +46,8 @@ ros::NodeHandle *CKheperaIVRos::nodeHandle = initROS();
 CKheperaIVRos::CKheperaIVRos() : m_pcWheels(NULL),
                                  m_pcProximity(NULL),
                                  m_fWheelVelocity(2.5f),
-                                //  m_pcRABA(NULL),
-                                //  m_pcRABS(NULL),
+                                 m_pcRABA(NULL),
+                                 m_pcRABS(NULL),
                                  m_pcLIDAR(NULL)
 {
   odom_broadcaster = std::make_unique<tf::TransformBroadcaster>();
@@ -83,15 +83,15 @@ void CKheperaIVRos::Init(TConfigurationNode &t_node)
   m_pcWheels = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
   m_pcEncoder = GetSensor<CCI_DifferentialSteeringSensor>("differential_steering");
   m_pcProximity = GetSensor<CCI_KheperaIVProximitySensor>("kheperaiv_proximity");
-  // m_pcRABA = GetActuator<CCI_RangeAndBearingActuator>("range_and_bearing");
-  // m_pcRABS = GetSensor<CCI_RangeAndBearingSensor>("range_and_bearing");
+  m_pcRABA = GetActuator<CCI_RangeAndBearingActuator>("range_and_bearing");
+  m_pcRABS = GetSensor<CCI_RangeAndBearingSensor>("range_and_bearing");
   m_pcLIDAR = GetSensor<CCI_KheperaIVLIDARSensor>("kheperaiv_lidar");
 }
 
 void CKheperaIVRos::ControlStep()
 {
   this->updateTime();
-  // this->publishLineOfSight();
+  this->publishLineOfSight();
   this->publishProximity();
   this->publishLIDAR();
   this->publishOdometry();
@@ -116,6 +116,7 @@ void CKheperaIVRos::updateTime()
 {
   // updates rostime to sync all ros processes to argos clock
   time += ros::Duration(timestep);
+  // ros::Time new_time = 
 }
 
 void CKheperaIVRos::publishLIDAR()
@@ -144,27 +145,19 @@ void CKheperaIVRos::publishLIDAR()
 void CKheperaIVRos::publishLineOfSight()
 {
   // broadcast current robot to all LOS
-  int msgCap = 10;
-  // char payload[msgCap];
-  // for (int i = 0; i < msgCap; i++) {
-  //   payload[i] = '\0';
-  // }
-  // Get local id
-
   char nulls[2] = {'0', '0'};
   uint8_t *empty = reinterpret_cast<uint8_t *>(&nulls);
 
   const char *id = GetId().c_str();
+  size_t id_len = strlen(id);
   // Copy id to payload
   // strcpy(&payload, id);
   // memcpy(&payload,strlen(id))
   // Convert c_string to bytes
   uint8_t *data = reinterpret_cast<uint8_t *>(const_cast<char *>(id));
-
-  // argos::CByteArray buff = argos::CByteArray((size_t) msgCap - , (UInt8) '\0');
-  CByteArray buff = CByteArray(data, 8);
-
-  buff.AddBuffer(empty, 2);
+  // TODO verify id length is less than the message size
+  CByteArray buff = CByteArray(data, id_len);
+  buff.AddBuffer(empty, m_pcRABA->GetSize() - id_len);
   m_pcRABA->SetData(buff);
 
   // write all robot names within los to rosmsg
@@ -183,8 +176,17 @@ void CKheperaIVRos::publishLineOfSight()
     // Docs: https://www.argos-sim.info/api/a02302.php
 
     const unsigned char *data = packets[i].Data.ToCArray();
+    // stringstream incoming_msg;
+    // for(int ii = 0; ii<packets[i].Data.Size(); i++){
+    //   incoming_msg << packets[i].Data[ii];
+    //   if(packets[i].Data[ii] == '\n'){
+    //     break;
+    //   }
+    // }
     std::string s(reinterpret_cast<const char *>(data), packets[i].Data.Size());
-    losmsg.robotName = s;
+    
+    // TODO add parsing for name length
+    losmsg.robotName = s; // incoming_msg.str();
     loslist.robots.push_back(losmsg);
   }
   losPub.publish(loslist);

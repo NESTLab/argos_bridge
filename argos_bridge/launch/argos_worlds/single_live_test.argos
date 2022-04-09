@@ -15,16 +15,16 @@
     <kheperaiv_ros_controller id="robot_" library="libkheperaiv_ros">
       <actuators>
         <differential_steering implementation="default" />
-        <!-- <range_and_bearing implementation="default" /> -->
+        <range_and_bearing implementation="default" />
         <leds implementation="default" medium="leds" />
       </actuators>
       <sensors>
         <differential_steering implementation="default" />
         <kheperaiv_proximity implementation="default" show_rays="false" />
-        <!-- <range_and_bearing implementation="medium"
-                                     medium="rab" /> -->
+        <range_and_bearing implementation="medium"
+                                     medium="rab" />
         <kheperaiv_lidar implementation="default"
-               show_rays="true"
+               show_rays="false"
                noise_level="0.1"/>
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" />
@@ -36,14 +36,24 @@
   <!-- ****************** -->
    <loop_functions label="MasterLoopFunctions">
     <sub_loop_function label="BaseNetworking" />
-    <sub_loop_function library="libclock_loop_functions" label="clock_loop_functions" />
+    <!-- <sub_loop_function library="libclock_loop_functions" label="clock_loop_functions" /> -->
   </loop_functions>
 
   
     <!--
         The robot (add more later!).
     -->
-    <distribute>
+  <kheperaiv id="robot_">
+    <controller config="robot_"/>
+  </kheperaiv>
+
+  <kheperaiv id="robot_">
+    <controller config="robot_"/>
+  </kheperaiv>
+
+
+    
+    <!-- <distribute>
       <position method="uniform" min="-0.25,-1,0" max="0.25,1,0"/>
       <orientation method="constant" values="0,0,0"/>
 
@@ -54,7 +64,7 @@
         </kheperaiv>
 
       </entity>
-    </distribute>
+    </distribute> -->
 
   <!-- *********************** -->
     <!-- * Arena configuration * -->
@@ -92,7 +102,7 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <!-- <range_and_bearing id="rab" /> -->
+    <range_and_bearing id="rab" />
     <led id="leds"/>
   </media>
 
