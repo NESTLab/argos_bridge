@@ -1,5 +1,0 @@
-add_subdirectory(controllers)
-add_subdirectory(loop_functions)
-add_subdirectory(utility)
-add_subdirectory(robots)
-add_subdirectory(simulator)

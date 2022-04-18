@@ -1,3 +1,0 @@
-add_subdirectory(controller_assignment)
-add_subdirectory(datatypes)
-add_subdirectory(networking)

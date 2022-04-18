@@ -23,7 +23,7 @@
         <range_and_bearing implementation="medium"
                                      medium="rab" />
         <kheperaiv_lidar implementation="default"
-               show_rays="false"
+               show_rays="true"
                noise_level="0.1"/>
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" ticks_per_second="10"/>
