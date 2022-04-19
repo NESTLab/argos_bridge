@@ -13,6 +13,7 @@
   <!-- *************** --> 
   <controllers>
     <diffusion_ros_controller id="robot_" library="libdiffusion_ros">
+
       <actuators>
         <differential_steering implementation="default" />
       </actuators>
