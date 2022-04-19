@@ -12,15 +12,16 @@
   <!-- * Controllers * -->
   <!-- *************** --> 
   <controllers>
-    <differential_drive_controller id="robot_" library="libdifferential_drive">
+    <diffusion_ros_controller id="robot_" library="libdiffusion_ros">
       <actuators>
         <differential_steering implementation="default" />
       </actuators>
       <sensors>
         <differential_steering implementation="default" />
+        <kheperaiv_proximity implementation="default" show_rays="true" />
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" />
-    </differential_drive_controller>
+    </diffusion_ros_controller>
   </controllers>
   
   <!-- *********************** -->
