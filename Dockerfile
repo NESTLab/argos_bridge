@@ -48,7 +48,7 @@ RUN apt-get install -y libgsl-dev cmake libfreeimage-dev libfreeimageplus-dev \
   cd argos3; \
   mkdir build_simulator; \
   cd build_simulator; \
-  cmake ../src; \
+  cmake -DCMAKE_BUILD_TYPE=debug ../src; \
   make; \
   make doc; \
   echo '/usr/local/lib' >> /etc/ld.so.conf; \

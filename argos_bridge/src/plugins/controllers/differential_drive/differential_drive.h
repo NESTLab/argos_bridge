@@ -86,7 +86,7 @@ public:
      * 
      * @return void *
      */
-    void InitROS();
+    virtual void InitROS();
 
     /**
      * @brief Callback method for cmd velocity topic
@@ -94,7 +94,7 @@ public:
      * @param twist callback msg from /cmd_vel topic
      * @return * void
      */
-    void CommandVelocityCallback(const geometry_msgs::Twist &twist);
+    virtual void CommandVelocityCallback(const geometry_msgs::Twist &twist);
 
     /**
      * @brief Reads latest velocity info from motor encoders
@@ -102,7 +102,7 @@ public:
      * @return double* wheel_vel[WHEEL_NUM]
      */
     
-    double* ReadMotorEncoders();
+    virtual double* ReadMotorEncoders();
 
     /**
      * @brief Updates the odometry arrays (odom_position, odom_velocity)
@@ -133,7 +133,8 @@ public:
      */
     void InitOdometry();
 
-private:
+// private:
+// protected:
     /*********************************************************************
      * ROS NodeHandle
      ********************************************************************/
@@ -182,7 +183,7 @@ private:
      * MISC
      ********************************************************************/
     std::string controller_name;
-    float speed_scaler = 1.0f;
+    float speed_scaler = 10.0f;
 };
 
 #endif

@@ -7,6 +7,9 @@ CDifferentialDrive::CDifferentialDrive() : m_pcWheels(NULL),
 {
 }
 
+/****************************************/
+/****************************************/
+
 void CDifferentialDrive::Init(TConfigurationNode &t_node)
 {
   // Name and ROS
@@ -19,7 +22,12 @@ void CDifferentialDrive::Init(TConfigurationNode &t_node)
   // Get sensor/actuator handles
   m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
   m_pcEncoder   = GetSensor  <CCI_DifferentialSteeringSensor  >("differential_steering");
+  
+  RLOG << controller_name << "initlaized" << std::endl;
 }
+
+/****************************************/
+/****************************************/
 
 void CDifferentialDrive::ControlStep()
 {
@@ -36,6 +44,9 @@ void CDifferentialDrive::ControlStep()
   // ros spin
   ros::spinOnce();
 }
+
+/****************************************/
+/****************************************/
 
 void CDifferentialDrive::InitROS()
 {
@@ -60,11 +71,17 @@ void CDifferentialDrive::InitROS()
   tf_broadcaster = new tf::TransformBroadcaster();
 }
 
+/****************************************/
+/****************************************/
+
 void CDifferentialDrive::InitOdometry()
 {
   odom_header_frame_id = "odom";
   odom_child_frame_id = "base_footprint";
 }
+
+/****************************************/
+/****************************************/
 
 void CDifferentialDrive::CommandVelocityCallback(const geometry_msgs::Twist &twist)
 {
@@ -73,8 +90,8 @@ void CDifferentialDrive::CommandVelocityCallback(const geometry_msgs::Twist &twi
   if (abs(w) < goStraightConstant){
     w = 0.0;
   }
-  Real leftSpeed = v - KHEPERAIV_BASE_RADIUS * w;
-  Real rightSpeed = v + KHEPERAIV_BASE_RADIUS * w;
+  Real leftSpeed = (v - KHEPERAIV_BASE_RADIUS * w) * KHEPERAIV_WHEEL_RADIUS;
+  Real rightSpeed = (v + KHEPERAIV_BASE_RADIUS * w) * KHEPERAIV_WHEEL_RADIUS;
   RLOG << controller_name << std::endl;
   m_pcWheels->SetLinearVelocity(leftSpeed, rightSpeed);
 }
@@ -82,10 +99,13 @@ void CDifferentialDrive::CommandVelocityCallback(const geometry_msgs::Twist &twi
 double* CDifferentialDrive::ReadMotorEncoders()
 {
   double* last_velocity = new double[WHEEL_NUM];
-  last_velocity[LEFT] = m_pcEncoder->GetReading().VelocityLeftWheel * KHEPERAIV_WHEEL_RADIUS / 100.0f; // div 100 to go from cm to m
-  last_velocity[RIGHT] = m_pcEncoder->GetReading().VelocityRightWheel * KHEPERAIV_WHEEL_RADIUS / 100.0f;
+  last_velocity[LEFT] = this->m_pcEncoder->GetReading().VelocityLeftWheel * KHEPERAIV_WHEEL_RADIUS / 100.0f; // div 100 to go from cm to m
+  last_velocity[RIGHT] = this->m_pcEncoder->GetReading().VelocityRightWheel * KHEPERAIV_WHEEL_RADIUS / 100.0f;
   return last_velocity;
 }
+
+/****************************************/
+/****************************************/
 
 void CDifferentialDrive::CalculateOdometry(ros::Duration timeDiff)
 {
@@ -128,6 +148,9 @@ void CDifferentialDrive::CalculateOdometry(ros::Duration timeDiff)
   delete last_velocity;
 }
 
+/****************************************/
+/****************************************/
+
 void CDifferentialDrive::UpdateOdometryMessage()
 {
   odom_msg.header.stamp = previous_time;
@@ -145,6 +168,9 @@ void CDifferentialDrive::UpdateOdometryMessage()
 
   odom_pub.publish(odom_msg);
 }
+
+/****************************************/
+/****************************************/
 
 void CDifferentialDrive::UpdateOdometryTF()
 {

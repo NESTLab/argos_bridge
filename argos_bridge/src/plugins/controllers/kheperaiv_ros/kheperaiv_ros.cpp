@@ -283,6 +283,9 @@ void CKheperaIVRos::publishOdometry()
   odomPub.publish(odom);
 }
 
+/****************************************/
+/****************************************/
+
 void CKheperaIVRos::cmdVelCallback(const geometry_msgs::Twist &twist)
 {
   Real v = twist.linear.x * 1000.0f;  // Forward speed
